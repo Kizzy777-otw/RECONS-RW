@@ -1,12 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 
 const STORAGE_KEY = "recons-theme";
+const themeListeners = new Set<() => void>();
+
+function subscribeToTheme(listener: () => void) {
+  themeListeners.add(listener);
+  return () => themeListeners.delete(listener);
+}
+
+function getThemeSnapshot() {
+  return document.documentElement.classList.contains("dark");
+}
+
+function notifyThemeChange() {
+  themeListeners.forEach((listener) => listener());
+}
 
 export function ThemeToggle() {
-  const [dark, setDark] = useState(false);
+  const dark = useSyncExternalStore(subscribeToTheme, getThemeSnapshot, () => false);
 
   useEffect(() => {
     // Honor an explicit saved choice first, otherwise use the visitor's operating-system theme.
@@ -14,7 +28,7 @@ export function ThemeToggle() {
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const useDark = saved ? saved === "dark" : prefersDark;
     document.documentElement.classList.toggle("dark", useDark);
-    setDark(useDark);
+    notifyThemeChange();
   }, []);
 
   function toggleTheme() {
@@ -22,7 +36,7 @@ export function ThemeToggle() {
     const nextDark = !document.documentElement.classList.contains("dark");
     document.documentElement.classList.toggle("dark", nextDark);
     window.localStorage.setItem(STORAGE_KEY, nextDark ? "dark" : "light");
-    setDark(nextDark);
+    notifyThemeChange();
   }
 
   return (

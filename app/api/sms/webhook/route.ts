@@ -1,6 +1,8 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
+import { saveIncomingSms } from "@/lib/adminData";
 import { normalizeSmsPayload } from "@/lib/smsProcessor";
+import type { NormalizedSms } from "@/lib/smsProcessor";
 
 export const runtime = "nodejs";
 
@@ -29,18 +31,24 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "A valid JSON payload is required." }, { status: 400 });
   }
+  let sms: NormalizedSms;
   try {
-    const sms = normalizeSmsPayload(payload);
-    // This endpoint acknowledges valid messages; persistence is intentionally left to an integration.
-    console.info("SMS webhook received; connect ticket persistence to process it.", {
-      from: sms.from,
-      textLength: sms.text.length,
-    });
-    return NextResponse.json({ accepted: true }, { status: 202 });
+    sms = normalizeSmsPayload(payload);
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Invalid SMS payload." },
       { status: 400 },
+    );
+  }
+
+  try {
+    await saveIncomingSms(sms.from, sms.text, sms.externalId);
+    return NextResponse.json({ accepted: true }, { status: 202 });
+  } catch (error) {
+    console.error("Could not persist incoming SMS:", error);
+    return NextResponse.json(
+      { error: "The SMS could not be saved. Try again later." },
+      { status: 503 },
     );
   }
 }

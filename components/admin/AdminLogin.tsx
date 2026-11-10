@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { ArrowLeft, LockKeyhole } from "lucide-react";
+import Link from "next/link";
 import { Brand } from "@/components/Brand";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -49,7 +50,7 @@ export function AdminLogin() {
         <div className="w-full max-w-md">
           <div className="mb-12 flex items-center justify-between lg:hidden"><Brand /><ThemeToggle /></div>
           <div className="hidden justify-end lg:flex"><ThemeToggle /></div>
-          <a href="/" className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-navy dark:text-slate-400 dark:hover:text-white"><ArrowLeft size={16} /> Back to website</a>
+          <Link href="/" className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-navy dark:text-slate-400 dark:hover:text-white"><ArrowLeft size={16} /> Back to website</Link>
           <div className="mt-10 grid size-12 place-items-center rounded-2xl bg-electric-pale text-electric-dark"><LockKeyhole size={23} /></div>
           <h2 className="mt-6 text-3xl font-bold text-navy dark:text-white">Welcome back</h2>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Sign in to the RECONS operations portal.</p>

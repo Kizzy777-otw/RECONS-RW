@@ -14,13 +14,11 @@ function statusClass(status: IssueStatus) {
 export function TicketTable({
   issues,
   farmers,
-  statuses,
   openTicket,
   changeStatus,
 }: {
   issues: Issue[];
   farmers: Farmer[];
-  statuses: Record<string, IssueStatus>;
   openTicket: (issue: Issue) => void;
   changeStatus: (issue: Issue, status: IssueStatus) => void;
 }) {
@@ -39,13 +37,13 @@ export function TicketTable({
         <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
           {issues.map((issue) => {
             const farmer = farmers.find((entry) => entry.id === issue.farmerId);
-            const status = statuses[issue.id] ?? issue.status;
+            const status = issue.status;
             return (
               <tr key={issue.id} className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/40" onClick={() => openTicket(issue)}>
                 <td className="px-5 py-4">
                   <p className="font-semibold">{farmer?.name ?? "Unknown farmer"}</p>
                   <p className="mt-1 text-xs text-slate-400">{issue.phone}</p>
-                  <p className="mt-1 font-mono text-[10px] text-slate-400">{farmer?.contractNumber}</p>
+                  <p className="mt-1 font-mono text-[10px] text-slate-400">{farmer?.contractNumber || "No linked contract"}</p>
                 </td>
                 <td className="max-w-[280px] truncate px-5 py-4 text-slate-500 dark:text-slate-300">{issue.message}</td>
                 <td className="whitespace-nowrap px-5 py-4 text-xs text-slate-500 dark:text-slate-400">{formatDate(issue.receivedAt)}</td>

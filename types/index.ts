@@ -12,11 +12,19 @@ export type IssueStatus = "New" | "In progress" | "Resolved";
 
 export interface Issue {
   id: string;
-  farmerId: string;
+  farmerId: string | null;
   phone: string;
   message: string;
   receivedAt: string;
   status: IssueStatus;
+}
+
+export interface AdminContract {
+  id: string;
+  contractNumber: string;
+  farmerId: string;
+  model: string;
+  signedAt: string;
 }
 
 export interface Contract {
@@ -32,6 +40,10 @@ export interface ContractNote {
   text: string;
   createdAt: string;
   author: string;
+}
+
+export interface AdminContractNote extends ContractNote {
+  contractNumber: string;
 }
 
 export interface Service {

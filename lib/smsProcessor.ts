@@ -1,6 +1,7 @@
 export interface NormalizedSms {
   from: string;
   text: string;
+  externalId?: string;
 }
 
 export function normalizeSmsPayload(payload: unknown): NormalizedSms {
@@ -12,6 +13,7 @@ export function normalizeSmsPayload(payload: unknown): NormalizedSms {
   const record = payload as Record<string, unknown>;
   const from = record.from ?? record.phoneNumber ?? record.phone;
   const text = record.text ?? record.message ?? record.body;
+  const externalId = record.messageId ?? record.message_id ?? record.id;
 
   if (typeof from !== "string" || typeof text !== "string") {
     throw new TypeError("SMS webhook payload must include a sender and message text.");
@@ -24,5 +26,11 @@ export function normalizeSmsPayload(payload: unknown): NormalizedSms {
     throw new TypeError("SMS sender and message text must not be empty.");
   }
 
-  return { from: normalizedFrom, text: normalizedText };
+  return {
+    from: normalizedFrom,
+    text: normalizedText,
+    ...(typeof externalId === "string" && externalId.trim()
+      ? { externalId: externalId.trim() }
+      : {}),
+  };
 }
