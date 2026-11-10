@@ -11,7 +11,7 @@ const links = [
 
 export function Navbar() {
   return (
-    <header className="absolute inset-x-0 top-0 z-20 border-b border-slate-200/80 dark:border-white/10">
+    <header className="absolute inset-x-0 top-0 z-20 border-b border-slate-200/80 bg-[#F8FAFC] dark:border-white/10 dark:bg-navy-deep">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 lg:px-8">
         <Brand />
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
